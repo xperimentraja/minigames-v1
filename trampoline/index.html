@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trampoline Hop</title>
+<style>
+:root{--bg:#bfe6ff;--sky2:#eaf7ff;--ink:#1d2b3a;--ground:#6cc070;--tramp:#e8453c;--mat:#2b2b3a;--skin:#ffd2a8;--shirt:#3b7ddd;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17213a;--sky2:#26365c;--ink:#f1f5ff;--ground:#2f6b3a;--mat:#0f0f18}}
+:root[data-theme="dark"]{--bg:#17213a;--sky2:#26365c;--ink:#f1f5ff;--ground:#2f6b3a;--mat:#0f0f18}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;touch-action:none;user-select:none}
+#wrap{position:relative;height:100%;max-height:760px;aspect-ratio:480/640;max-width:100%}
+canvas{width:100%;height:100%;display:block;border-radius:12px}
+#hud{position:absolute;top:10px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;font-weight:700;font-size:18px;pointer-events:none}
+#msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(0,0,0,.35);color:#fff;border-radius:12px;cursor:pointer}
+#msg h1{margin:0 0 8px;font-size:34px}
+#msg p{margin:4px 0;font-size:16px}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="c" width="480" height="640"></canvas>
+  <div id="hud"><span id="score">Bounces: 0</span><span id="best">Best: 0</span></div>
+  <div id="msg"><h1>🤸 Trampoline Hop</h1><p>The trampoline slides around randomly.</p><p>Move your mouse left and right to steer the jumper.</p><p>(Touch: drag your finger. Keys: ← → / A D.)</p><p>3 levels. Reach 100 bounces in each to fly away with a 🏆</p><p><b>Tap or press Space to start</b></p></div>
+</div>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const W=480,H=640,GY=590,TY=540;let TW=130;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let p,t,score,best=0,state='ready',keys={},touch=0,clouds=[{x:60,y:90,s:1},{x:300,y:150,s:.8},{x:200,y:50,s:.6}];
+let trophies=0,level=1,finished=false;
+const LV=[
+ {base:.9,grow:.04,cap:2.6,tw:130,w:1,sky:null,hud:''},
+ {base:2.2,grow:.07,cap:5,tw:90,w:.6,sky:['#ffd9a8','#ff8fa3'],hud:'#3a1f2e'},
+ {base:3.2,grow:.09,cap:7,tw:65,w:.35,sky:['#0a0f2e','#303a82'],hud:'#ffffff'}];
+try{best=+localStorage.getItem('tbest')||0}catch(e){}
+function updateHud(){document.getElementById('best').textContent='Best: '+best+'  🏆 '+trophies+'/3'}
+function updateScore(){document.getElementById('score').textContent='Level '+level+'/3 · Bounces: '+score}
+updateHud();
+
+function reset(){
+  p={x:W/2,y:TY-60,vy:-14,sq:0,rot:0,spin:0};
+  const L=LV[level-1];TW=L.tw;
+  t={x:W/2,target:W/2,speed:L.base,wait:0,squash:0};
+  document.getElementById('hud').style.color=L.hud;
+  score=0;updateScore();
+}
+function win(){
+  state='won';trophies++;
+  if(score>best)best=score;
+  try{localStorage.setItem('tbest',best)}catch(e){}
+  updateHud();
+  const m=document.getElementById('msg');
+  if(level<3){
+    const done=level;level++;
+    m.innerHTML='<h1>🏆 Level '+done+' complete!</h1><p>100 bounces — he flew right off the screen!</p><p>Trophies: '+trophies+' / 3</p><p>Next level is much harder: faster, smaller, and it changes direction more often.</p><p><b>Tap or press Space for Level '+level+'</b></p>';
+  }else{
+    finished=true;
+    m.innerHTML='<h1>🏆🏆🏆 You win!</h1><p>All 3 levels complete!</p><p>Trophies: '+trophies+' / 3</p><p><b>Tap or press Space to play again</b></p>';
+  }
+  m.style.display='flex';
+}
+function start(){if(finished){level=1;trophies=0;finished=false;updateHud()}reset();state='play';document.getElementById('msg').style.display='none'}
+function over(){
+  state='over';
+  if(score>best){best=score;try{localStorage.setItem('tbest',best)}catch(e){}}
+  updateHud();
+  const m=document.getElementById('msg');
+  m.innerHTML='<h1>GAME OVER 💥</h1><p>You bounced <b>'+score+'</b> times.</p><p>Best: '+best+'</p><p><b>Tap or press Space to retry Level '+level+'</b></p>';
+  m.style.display='flex';
+}
+addEventListener('keydown',e=>{
+  keys[e.key.toLowerCase()]=true;
+  if((e.key===' '||e.key==='Enter')&&(state==='ready'||state==='over'||state==='won')){e.preventDefault();start()}
+});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+let pointerX=null;
+function setPointer(e){
+  const r=cv.getBoundingClientRect();
+  pointerX=Math.max(20,Math.min(W-20,(e.clientX-r.left)/r.width*W));
+}
+addEventListener('pointermove',setPointer);
+cv.addEventListener('pointerdown',setPointer);
+document.getElementById('msg').addEventListener('pointerdown',e=>{e.stopPropagation();if(state==='ready'||state==='over'||state==='won')start()});
+
+function update(){
+  // clouds drift
+  clouds.forEach(c=>{c.x+=.15*c.s;if(c.x>W+60)c.x=-60});
+  if(state==='fly'){
+    p.vy-=0.35;p.y+=p.vy;p.rot-=0.3;
+    if(p.y<-90)win();
+    return;
+  }
+  if(state!=='play')return;
+  // player horizontal control
+  const dir=(keys['arrowright']||keys['d']?1:0)-(keys['arrowleft']||keys['a']?1:0);
+  if(dir){p.x+=dir*5.2;pointerX=p.x}
+  else if(pointerX!==null){p.x+=(pointerX-p.x)*0.22}
+  p.x=Math.max(20,Math.min(W-20,p.x));
+  // trampoline random motion
+  t.wait--;
+  if(t.wait<=0||Math.abs(t.target-t.x)<3){
+    t.target=70+Math.random()*(W-140);
+    t.wait=(40+Math.random()*80)*LV[level-1].w;
+    {const L=LV[level-1];t.speed=Math.min(L.base+score*L.grow,L.cap)*(0.6+Math.random()*0.8);}
+  }
+  t.x+=Math.sign(t.target-t.x)*Math.min(t.speed,Math.abs(t.target-t.x));
+  // physics
+  const prevBottom=p.y;
+  p.vy+=0.55;p.y+=p.vy;
+  p.rot+=p.spin;
+  t.squash*=.85;p.sq*=.85;
+  if(p.vy>0&&prevBottom<=TY&&p.y>=TY){
+    if(Math.abs(p.x-t.x)<TW/2+8){
+      p.y=TY;
+      score++;
+      p.vy=-Math.min(14+score*.35,20);
+      p.sq=1;t.squash=1;
+      p.rot=0;
+      p.spin=(score%10===0)?-2*Math.PI/(2*Math.abs(p.vy)/0.55):0;
+      updateScore();
+      if(score>=100){state='fly';p.vy=-8;p.spin=0;}
+    }
+  }
+  if(p.y>GY)over();
+}
+
+function draw(){
+  const sk=LV[level-1].sky,g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,sk?sk[0]:css('--sky2'));g.addColorStop(1,sk?sk[1]:css('--bg'));
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(255,255,255,.7)';
+  clouds.forEach(c=>{ctx.beginPath();ctx.ellipse(c.x,c.y,40*c.s,16*c.s,0,0,7);ctx.ellipse(c.x+22*c.s,c.y-8*c.s,26*c.s,14*c.s,0,0,7);ctx.fill()});
+  ctx.fillStyle=css('--ground');ctx.fillRect(0,GY,W,H-GY);
+  if(!t)reset();
+  // trampoline
+  const sag=t.squash*14;
+  ctx.strokeStyle=css('--mat');ctx.lineWidth=5;ctx.lineCap='round';
+  [-1,1].forEach(s=>{ctx.beginPath();ctx.moveTo(t.x+s*(TW/2-8),TY+6);ctx.lineTo(t.x+s*(TW/2-14),GY);ctx.stroke()});
+  ctx.fillStyle=css('--tramp');
+  ctx.beginPath();ctx.moveTo(t.x-TW/2,TY);ctx.quadraticCurveTo(t.x,TY+sag*2,t.x+TW/2,TY);ctx.lineTo(t.x+TW/2,TY+8);ctx.quadraticCurveTo(t.x,TY+8+sag*2,t.x-TW/2,TY+8);ctx.closePath();ctx.fill();
+  ctx.fillStyle=css('--mat');ctx.fillRect(t.x-TW/2-4,TY-3,10,10);ctx.fillRect(t.x+TW/2-6,TY-3,10,10);
+  // person (feet at p.y)
+  const sx=1+p.sq*.25,sy=1-p.sq*.25,air=p.vy<0;
+  ctx.save();ctx.translate(p.x,p.y+(p.sq*sag?sag:0));ctx.scale(sx,sy);
+  ctx.translate(0,-28);ctx.rotate(p.rot);
+  ctx.strokeStyle=css('--shirt');ctx.lineWidth=6;
+  ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(0,12);ctx.stroke();               // body
+  ctx.beginPath();ctx.moveTo(0,-4);ctx.lineTo(air?-16:-12,air?-18:6);ctx.moveTo(0,-4);ctx.lineTo(air?16:12,air?-18:6);ctx.stroke(); // arms
+  ctx.strokeStyle='#2b3a55';
+  ctx.beginPath();ctx.moveTo(0,12);ctx.lineTo(-7,28);ctx.moveTo(0,12);ctx.lineTo(7,28);ctx.stroke(); // legs
+  ctx.fillStyle=css('--skin');ctx.beginPath();ctx.arc(0,-18,10,0,7);ctx.fill();   // head
+  // stylish quiff: tip lifts when falling, presses down when rising
+  const f=Math.max(-1,Math.min(1,p.vy/14));
+  ctx.fillStyle='#16161c';ctx.beginPath();
+  ctx.moveTo(-10.5,-17);
+  ctx.quadraticCurveTo(-12,-29,0,-30);
+  ctx.quadraticCurveTo(10,-34-f*4,18,-30-f*6);
+  ctx.quadraticCurveTo(12,-24,10.5,-17);
+  ctx.quadraticCurveTo(6,-23,0,-22);
+  ctx.quadraticCurveTo(-6,-22,-10.5,-17);
+  ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#5d6378';ctx.lineWidth=1.5;ctx.beginPath();
+  ctx.moveTo(-6,-27);ctx.quadraticCurveTo(4,-31-f*3,13,-29-f*4);ctx.stroke();
+  ctx.fillStyle='#222';ctx.fillRect(-4,-20,2,2);ctx.fillRect(2,-20,2,2);
+  // mouth: open grin going up, smile coming down, sad frown only after missing the trampoline
+  if(air){ctx.fillStyle='#7a1f2b';ctx.beginPath();ctx.arc(0,-15,4.5,0,Math.PI);ctx.closePath();ctx.fill();}
+  else{ctx.strokeStyle='#7a1f2b';ctx.lineWidth=1.5;ctx.beginPath();if(p.y>TY+2)ctx.arc(0,-11,4,1.15*Math.PI,1.85*Math.PI);else ctx.arc(0,-16,4,.15*Math.PI,.85*Math.PI);ctx.stroke();}
+  ctx.restore();
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.18)';ctx.beginPath();ctx.ellipse(p.x,GY+8,18-Math.min(10,(GY-p.y)/40),4,0,0,7);ctx.fill();
+}
+reset();
+(function loop(){update();draw();requestAnimationFrame(loop)})();
+</script>
+</body>
+</html>
