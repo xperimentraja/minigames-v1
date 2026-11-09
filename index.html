@@ -3,97 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Mini-Game Arcade</title>
-    <script src="https://jsdelivr.net"></script>
+    <title>CrazyGames Mini</title>
+    <!-- Fixed Tailwind CSS Library Engine Link -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        crazy: {
+                            bg: '#050409',       
+                            sidebar: '#0e0c15',  
+                            card: '#161421',     
+                            cardHover: '#1f1c2e',
+                            accent: '#6b21a8',   
+                            accentLight: '#a855f7',
+                            textMuted: '#94a3b8' 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        @import url('https://googleapis.com');
-        .arcade-font { font-family: 'Press Start 2P', cursive; }
-        .mono-font { font-family: 'Share Tech Mono', monospace; }
+        body { font-family: 'Nunito', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen selection:bg-purple-500 selection:text-white">
+<body class="bg-crazy-bg text-slate-100 min-h-screen flex items-center justify-center p-4 select-none">
 
-    <!-- Header Section -->
-    <header class="py-12 text-center border-b border-gray-900 bg-gray-900/30 backdrop-blur-sm">
-        <h1 class="arcade-font text-3xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-400 animate-pulse drop-shadow-[0_5px_5px_rgba(168,85,247,0.4)]">
-            MINI ARCADIA
-        </h1>
-        <p class="mono-font text-xl text-gray-400 mt-4 tracking-widest uppercase">
-            A collection of individual web games
-        </p>
-    </header>
+    <!-- Compact Deck Shell Container -->
+    <div class="w-full max-w-[320px] bg-crazy-sidebar border border-purple-950/20 rounded-xl p-3 shadow-2xl shadow-black/80">
+        
+        <!-- Header Ribbon Component -->
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-purple-950/20">
+            <div class="flex items-center space-x-1.5">
+                <div class="h-5 w-5 rounded bg-crazy-accent flex items-center justify-center text-[11px] font-black text-white">🎮</div>
+                <span class="text-xs font-black tracking-tight text-white uppercase">Crazy<span class="text-crazy-accentLight">Games</span></span>
+            </div>
+            <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">Live Deck</span>
+        </div>
 
-    <!-- Games Grid Section -->
-    <main class="max-w-6xl mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- 2-Widgets Per Row High-Density Display Grid Matrix (Exactly 8 Slots Max) -->
+        <div class="grid grid-cols-2 gap-2">
             
-            <!-- Game 1: Ludo -->
-            <div class="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-purple-500 transition-all duration-300 transform hover:-translate-y-1 shadow-xl hover:shadow-purple-900/20">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs uppercase tracking-wider bg-purple-900/50 text-purple-300 px-2.5 py-1 rounded border border-purple-700/50 mono-font">Board Game</span>
-                        <span class="text-emerald-400 text-xs flex items-center gap-1 mono-font">● Ready to Play</span>
-                    </div>
-                    <h2 class="arcade-font text-lg text-white group-hover:text-purple-400 transition-colors">Ludo</h2>
-                    <p class="text-gray-400 text-sm mt-3 font-sans leading-relaxed">The classic strategy board game for friends and family. Roll the dice, race your tokens, and capture your opponents' pieces.</p>
-                    <a href="./ludo/index.html" class="mt-6 inline-flex items-center justify-center w-full px-4 py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg transition-colors arcade-font text-xs tracking-wider">
-                        INSERT COIN
-                    </a>
+            <!-- Widget 1: Ludo -->
+            <a href="./ludo/index.html" class="group flex items-center p-2 bg-crazy-card border border-purple-950/10 rounded-lg hover:bg-crazy-cardHover hover:border-crazy-accentLight/30 transition-all duration-100">
+                <div class="h-5 w-5 rounded bg-slate-950 border border-slate-800/60 flex items-center justify-center flex-shrink-0 mr-2">
+                    <svg class="w-3 h-3 group-hover:scale-110 transition duration-100" viewBox="0 0 16 16" fill="none">
+                        <rect x="1" y="1" width="6" height="6" fill="#EF4444"/>
+                        <rect x="9" y="1" width="6" height="6" fill="#3B82F6"/>
+                        <rect x="1" y="9" width="6" height="6" fill="#F59E0B"/>
+                        <rect x="9" y="9" width="6" height="6" fill="#10B981"/>
+                    </svg>
                 </div>
+                <span class="text-[11px] font-black text-slate-200 group-hover:text-crazy-accentLight transition truncate">Ludo</span>
+            </a>
+
+            <!-- Widget 2: Trampoline -->
+            <a href="./trampoline/index.html" class="group flex items-center p-2 bg-crazy-card border border-purple-950/10 rounded-lg hover:bg-crazy-cardHover hover:border-crazy-accentLight/30 transition-all duration-100">
+                <div class="h-5 w-5 rounded bg-slate-950 border border-slate-800/60 flex items-center justify-center flex-shrink-0 mr-2">
+                    <svg class="w-3 h-3 text-emerald-400 group-hover:scale-110 transition duration-100" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 11 Q8 15 14 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="8" cy="5" r="1.5" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="text-[11px] font-black text-slate-200 group-hover:text-crazy-accentLight transition truncate">Trampoline</span>
+            </a>
+
+            <!-- Widget 3: Car Dodge -->
+            <a href="./car-dodge/index.html" class="group flex items-center p-2 bg-crazy-card border border-purple-950/10 rounded-lg hover:bg-crazy-cardHover hover:border-crazy-accentLight/30 transition-all duration-100">
+                <div class="h-5 w-5 rounded bg-slate-950 border border-slate-800/60 flex items-center justify-center flex-shrink-0 mr-2">
+                    <svg class="w-3 h-3 text-slate-500 group-hover:scale-110 transition duration-100" viewBox="0 0 16 16" fill="none">
+                        <line x1="4" y1="0" x2="4" y2="16" stroke="currentColor" stroke-width="1"/>
+                        <line x1="12" y1="0" x2="12" y2="16" stroke="currentColor" stroke-width="1"/>
+                        <rect x="7" y="10" width="2" height="4" fill="#3B82F6"/>
+                    </svg>
+                </div>
+                <span class="text-[11px] font-black text-slate-200 group-hover:text-crazy-accentLight transition truncate">Car Dodge</span>
+            </a>
+
+            <!-- Widget 4: Bird Obby -->
+            <a href="./bird-obby/index.html" class="group flex items-center p-2 bg-crazy-card border border-purple-950/10 rounded-lg hover:bg-crazy-cardHover hover:border-crazy-accentLight/30 transition-all duration-100">
+                <div class="h-5 w-5 rounded bg-slate-950 border border-slate-800/60 flex items-center justify-center flex-shrink-0 mr-2">
+                    <svg class="w-3 h-3 text-purple-400 group-hover:scale-110 transition duration-100" viewBox="0 0 16 16" fill="none">
+                        <circle cx="4" cy="8" r="1.5" fill="currentColor"/>
+                        <rect x="11" y="1" width="2" height="4" fill="#4B5563"/>
+                        <rect x="11" y="11" width="2" height="4" fill="#4B5563"/>
+                    </svg>
+                </div>
+                <span class="text-[11px] font-black text-slate-200 group-hover:text-crazy-accentLight transition truncate">Bird Obby</span>
+            </a>
+
+            <!-- Empty Placeholder Slot 5 -->
+            <div class="flex items-center p-2 bg-slate-950/20 border border-dashed border-purple-950/10 rounded-lg opacity-25">
+                <div class="h-5 w-5 rounded border border-slate-700 flex items-center justify-center mr-2 text-[9px] font-mono text-slate-500">+</div>
+                <span class="text-[11px] font-bold text-slate-500 truncate">Empty Slot</span>
             </div>
 
-            <!-- Game 2: Trampoline -->
-            <div class="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1 shadow-xl hover:shadow-blue-900/20">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs uppercase tracking-wider bg-blue-900/50 text-blue-300 px-2.5 py-1 rounded border border-blue-700/50 mono-font">Physics / Arcade</span>
-                        <span class="text-emerald-400 text-xs flex items-center gap-1 mono-font">● Ready to Play</span>
-                    </div>
-                    <h2 class="arcade-font text-lg text-white group-hover:text-blue-400 transition-colors">Trampoline</h2>
-                    <p class="text-gray-400 text-sm mt-3 font-sans leading-relaxed">Time your bounces perfectly to reach outer space. Perform flips, collect power-ups, and avoid landing off-center.</p>
-                    <a href="./trampoline/index.html" class="mt-6 inline-flex items-center justify-center w-full px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors arcade-font text-xs tracking-wider">
-                        INSERT COIN
-                    </a>
-                </div>
+            <!-- Empty Placeholder Slot 6 -->
+            <div class="flex items-center p-2 bg-slate-950/20 border border-dashed border-purple-950/10 rounded-lg opacity-25">
+                <div class="h-5 w-5 rounded border border-slate-700 flex items-center justify-center mr-2 text-[9px] font-mono text-slate-500">+</div>
+                <span class="text-[11px] font-bold text-slate-500 truncate">Empty Slot</span>
             </div>
 
-            <!-- Game 3: Car Dodge -->
-            <div class="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-red-500 transition-all duration-300 transform hover:-translate-y-1 shadow-xl hover:shadow-red-900/20">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs uppercase tracking-wider bg-red-900/50 text-red-300 px-2.5 py-1 rounded border border-red-700/50 mono-font">Action / Endless</span>
-                        <span class="text-emerald-400 text-xs flex items-center gap-1 mono-font">● Ready to Play</span>
-                    </div>
-                    <h2 class="arcade-font text-lg text-white group-hover:text-red-400 transition-colors">Car Dodge</h2>
-                    <p class="text-gray-400 text-sm mt-3 font-sans leading-relaxed">Weave through heavy highway traffic at high speeds. Collect fuel tanks, unlock faster cars, and see how long you can survive.</p>
-                    <a href="./car-dodge/index.html" class="mt-6 inline-flex items-center justify-center w-full px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg transition-colors arcade-font text-xs tracking-wider">
-                        INSERT COIN
-                    </a>
-                </div>
+            <!-- Empty Placeholder Slot 7 -->
+            <div class="flex items-center p-2 bg-slate-950/20 border border-dashed border-purple-950/10 rounded-lg opacity-25">
+                <div class="h-5 w-5 rounded border border-slate-700 flex items-center justify-center mr-2 text-[9px] font-mono text-slate-500">+</div>
+                <span class="text-[11px] font-bold text-slate-500 truncate">Empty Slot</span>
             </div>
 
-            <!-- Game 4: Bird Obby -->
-            <div class="group relative bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-amber-500 transition-all duration-300 transform hover:-translate-y-1 shadow-xl hover:shadow-amber-900/20">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="text-xs uppercase tracking-wider bg-amber-900/50 text-amber-300 px-2.5 py-1 rounded border border-amber-700/50 mono-font">Platformer / Skill</span>
-                        <span class="text-emerald-400 text-xs flex items-center gap-1 mono-font">● Ready to Play</span>
-                    </div>
-                    <h2 class="arcade-font text-lg text-white group-hover:text-amber-400 transition-colors">Bird Obby</h2>
-                    <p class="text-gray-400 text-sm mt-3 font-sans leading-relaxed">Navigate an intensive 2D obstacle course tailored for avian agility. Avoid moving traps, spikes, and tricky drops.</p>
-                    <a href="./bird-obby/index.html" class="mt-6 inline-flex items-center justify-center w-full px-4 py-3 bg-amber-600 hover:bg-amber-500 text-white font-medium rounded-lg transition-colors arcade-font text-xs tracking-wider">
-                        INSERT COIN
-                    </a>
-                </div>
+            <!-- Empty Placeholder Slot 8 -->
+            <div class="flex items-center p-2 bg-slate-950/20 border border-dashed border-purple-950/10 rounded-lg opacity-25">
+                <div class="h-5 w-5 rounded border border-slate-700 flex items-center justify-center mr-2 text-[9px] font-mono text-slate-500">+</div>
+                <span class="text-[11px] font-bold text-slate-500 truncate">Empty Slot</span>
             </div>
 
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="text-center py-8 text-gray-600 mono-font text-sm border-t border-gray-900 mt-12">
-        <p>Built with GitHub & Netlify // © 2026 Arcade Dashboard</p>
-    </footer>
+    </div>
 
 </body>
 </html>
